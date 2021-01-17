@@ -1,8 +1,8 @@
 # Космические стрелялки
 
-[Скриншот1](screens/screenshot1.png) <br>
-[Скриншот2](screens/screenshot2.png) <br>
-[Скриншот3](screens/screenshot3.png) <br>
+![Скриншот1](screens/screenshot1.png) <br>
+![Скриншот2](screens/screenshot2.png) <br>
+![Скриншот3](screens/screenshot3.png) <br>
 Суть игры заключается в том, что вы дожны убить как можно больше вражеских кораблей.
 Здоровье каждого корабля равно 100 единицам. Ваше здоровье тоже равно 100 единицам, если что :) <br>
 
