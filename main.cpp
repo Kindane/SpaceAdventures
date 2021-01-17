@@ -55,7 +55,7 @@ int main() {
     RectangleShape bort_2(Vector2f(30, 840));
     RectangleShape bort_3(Vector2f(80, 80));
 
-    karta.setFillColor(Color::White);
+    karta.setFillColor(Color::Black);
     karta.setPosition(0, 0);
 
     bort_1.setFillColor(Color::Red);
