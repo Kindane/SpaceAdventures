@@ -2,6 +2,10 @@
 #include <ctime>
 #include <iostream>
 #include <sstream>
+#include <stdio.h>
+#include <string>
+
+#define FILE_SCORE_NAME ("cache/score")
 
 using namespace sf;
 using namespace std;
@@ -44,19 +48,26 @@ class Player {
     }
 };
 
+void drawMainMenu(RenderWindow &);
+bool check_sfile();
+void init_sfile();
+long get_sfile_data();
+bool push_sfile_data(int);
+
 int main() {
     srand(std::time(0));
     int speed = 300;
-    RenderWindow window(sf::VideoMode(600, 680), "Space Adventures", sf::Style::Close | sf::Style::Titlebar);
+    RenderWindow window(sf::VideoMode(600, 680), "Space Adventures",
+                        sf::Style::Close | sf::Style::Titlebar);
     window.setFramerateLimit(60);
 
-    RectangleShape karta(Vector2f(680, 840));
+    RectangleShape map(Vector2f(680, 840));
     RectangleShape bort_1(Vector2f(30, 840));
     RectangleShape bort_2(Vector2f(30, 840));
     RectangleShape bort_3(Vector2f(80, 80));
 
-    karta.setFillColor(Color::Black);
-    karta.setPosition(0, 0);
+    map.setFillColor(Color::Black);
+    map.setPosition(0, 0);
 
     bort_1.setFillColor(Color::Red);
     bort_1.setPosition(0, 0);
@@ -67,6 +78,7 @@ int main() {
 
     sf::Font font;
     font.loadFromFile("./fonts/DejaVuSansMono.ttf");
+    Player p("img/Airplane.png", 300, 650, 130, 90);
 
     sf::Text score_text;
     score_text.setFont(font);
@@ -78,19 +90,21 @@ int main() {
 
     sf::Text game_over_text;
     game_over_text.setFont(font);
-    game_over_text.setString("GAME OVER");
-    game_over_text.setCharacterSize(50);
+    // string text = "GAME OVER\nYour score: " + p.score;
+    game_over_text.setCharacterSize(35);
     game_over_text.setStyle(sf::Text::Bold);
-    game_over_text.setColor(sf::Color::White);
-    game_over_text.setPosition(600 / 4.5, 680 / 2);
+    game_over_text.setColor(sf::Color::Red);
+    game_over_text.setPosition(60, 270);
 
     bool is_game_over = false;
 
-    Player p("Airplane.png", 300, 540, 130, 90);
-
     sf::Clock clock;
-    
 
+    if (!check_sfile())
+        init_sfile();
+
+    if (window.isOpen())
+        drawMainMenu(window);
 
     while (window.isOpen()) {
         sf::Time dt = clock.restart();
@@ -117,8 +131,8 @@ int main() {
 
             if (p.sprite.getPosition().x < 95)
                 p.sprite.setPosition(95, p.sprite.getPosition().y);
-            else if (p.sprite.getPosition().x > 505)
-                p.sprite.setPosition(505, p.sprite.getPosition().y);
+            else if (p.sprite.getPosition().x > 567)
+                p.sprite.setPosition(566, p.sprite.getPosition().y);
 
             bort_3.move(0, 600 * dt.asSeconds());
 
@@ -161,8 +175,11 @@ int main() {
                                      p.sprite.getGlobalBounds().top - 2.0);
             }
 
-        } // if (!game_over)
-        else {
+        }      // if (!game_over)
+        else { // game over
+            if (get_sfile_data() < p.score)
+                push_sfile_data(p.score);
+
             if (Keyboard::isKeyPressed(sf::Keyboard::Return)) {
                 is_game_over = false;
                 p.is_shot = false;
@@ -178,7 +195,7 @@ int main() {
         window.clear();
 
         if (!is_game_over) {
-            window.draw(karta);
+            window.draw(map);
             window.draw(bort_1);
             window.draw(bort_2);
             window.draw(bort_3);
@@ -186,11 +203,78 @@ int main() {
                 window.draw(p.bullet);
             window.draw(p.sprite);
         } else {
+            // game_over_text.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            ostringstream __oss;
+            __oss << p.score;
+            string output_text = "GAME OVER\nYour score: " + __oss.str() + "\nPress Enter to resume";
+            game_over_text.setString(output_text);
             window.draw(game_over_text);
         }
 
-        window.draw(score_text);
+        if (!is_game_over)
+            window.draw(score_text);
 
         window.display();
     }
+}
+
+void drawMainMenu(RenderWindow &window) {
+    Text text;
+    Font font;
+    font.loadFromFile("./fonts/DejaVuSansMono.ttf");
+    text.setFont(font);
+    ostringstream oss;
+    oss << get_sfile_data();
+    std::string str_text = "Press Enter to play\nHigh score: " + oss.str();
+    text.setString(str_text);
+    text.setCharacterSize(30);
+    text.setPosition(Vector2f(120, 300));
+    while (!Keyboard::isKeyPressed(Keyboard::Enter)) {
+        Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::Closed) {
+                window.close();
+                exit(0);
+            }
+        }
+        window.clear();
+        window.draw(text);
+        window.display();
+    }
+}
+
+bool check_sfile() {
+    int res = 0;
+    FILE *file = fopen(FILE_SCORE_NAME, "r");
+    if (file != (void *)0) {
+        res = 1;
+        fclose(file);
+    }
+    return res;
+}
+
+void init_sfile() {
+    FILE *file = fopen(FILE_SCORE_NAME, "w");
+    fprintf(file, "%d", 0);
+    fclose(file);
+}
+
+long get_sfile_data() {
+    if (!check_sfile())
+        return -1;
+
+    FILE *file = fopen(FILE_SCORE_NAME, "r");
+    long res = 0;
+    fscanf(file, "%ld", &res);
+    fclose(file);
+    return res;
+}
+
+bool push_sfile_data(int score) {
+    if (!check_sfile())
+        return false;
+    FILE *file = fopen(FILE_SCORE_NAME, "w");
+    fprintf(file, "%d", score);
+    fclose(file);
+    return true;
 }
