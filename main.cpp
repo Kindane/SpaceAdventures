@@ -47,7 +47,7 @@ class Player {
 int main() {
     srand(std::time(0));
     int speed = 300;
-    RenderWindow window(sf::VideoMode(600, 680), "Space Adventures");
+    RenderWindow window(sf::VideoMode(600, 680), "Space Adventures", sf::Style::Close | sf::Style::Titlebar);
     window.setFramerateLimit(60);
 
     RectangleShape karta(Vector2f(680, 840));
