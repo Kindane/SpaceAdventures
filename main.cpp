@@ -66,7 +66,7 @@ int main() {
     bort_3.setPosition(300, 0);
 
     sf::Font font;
-    font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf");
+    font.loadFromFile("./fonts/DejaVuSansMono.ttf");
 
     sf::Text score_text;
     score_text.setFont(font);
@@ -89,6 +89,8 @@ int main() {
     Player p("Airplane.png", 300, 540, 130, 90);
 
     sf::Clock clock;
+    
+
 
     while (window.isOpen()) {
         sf::Time dt = clock.restart();
