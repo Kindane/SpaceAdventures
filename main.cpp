@@ -66,7 +66,7 @@ int main() {
     bort_3.setPosition(300, 0);
 
     sf::Font font;
-    font.loadFromFile("/usr/share/fonts/opentype/malayalam/Gayathri-Bold.otf");
+    font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf");
 
     sf::Text score_text;
     score_text.setFont(font);
@@ -82,7 +82,7 @@ int main() {
     game_over_text.setCharacterSize(50);
     game_over_text.setStyle(sf::Text::Bold);
     game_over_text.setColor(sf::Color::White);
-    game_over_text.setPosition(600 / 3, 680 / 2);
+    game_over_text.setPosition(600 / 4.5, 680 / 2);
 
     bool is_game_over = false;
 
